@@ -1,14 +1,36 @@
 package ru.korotaeva.vasilisa.weather2.ui.main
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import retrofit2.Response
+import ru.korotaeva.vasilisa.weather2.model.weatherOfCity.WeatherOfTheCity
+import ru.korotaeva.vasilisa.weather2.repository.Repository
+import kotlin.time.Duration.Companion.days
 
 class MainViewModel : ViewModel() {
     // TODO: Implement the ViewModel
-private val key="f70de23578e62f51050edc52c3345f6c"
+    private lateinit var lat:String
+    private lateinit var lon:String
+    var repository = Repository()
+        //  val infoList: MutableLiveData<Response<WeatherOfTheCity>> = MutableLiveData()
+    fun search(city: String) {
+        viewModelScope.launch {
+            val response = repository.getLocationOfCity(city)
+           lat= response[0].lat.toString()
+            lon= response[0].lon.toString()
+            getAllInfo()
+        }
 
-    fun search(city: String){
-        var url="https://api.openweathermap.org/geo/1.0/direct?q="+city+"&limit=5&appid="+key+"&units=metric&lang=ru"
 
-    new
+    }
+
+    fun getAllInfo() {
+        viewModelScope.launch {
+           println( repository.getWeatherOfTheCity(lat, lon))
+            println(repository.getWeatherOfTheCity(lat, lon).daily[0].dt)
+        }
     }
 }

@@ -37,9 +37,9 @@ class MainFragment : Fragment() {
             if(textWriter.text.toString().trim().equals("")){
                 Toast.makeText(activity, "Введите город", Toast.LENGTH_LONG).show()
             }
-            else {
+            else
+
                 viewModel.search(textWriter.text.toString())
-            }
         }
     }
 
