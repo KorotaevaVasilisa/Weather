@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import ru.korotaeva.vasilisa.weather2.room.db.dao.CurrentWeatherDao
 import ru.korotaeva.vasilisa.weather2.room.db.dao.WeatherDao
 import ru.korotaeva.vasilisa.weather2.room.modelForDb.CurrentWeatherModel
 import ru.korotaeva.vasilisa.weather2.room.modelForDb.WeatherModel
@@ -30,5 +31,10 @@ abstract class WeatherDatabase : RoomDatabase() {
                 database as WeatherDatabase
             }
         }
+
     }
+
+    abstract fun getCurrentWeatherDao(): CurrentWeatherDao
+
+
 }

@@ -1,8 +1,6 @@
 package ru.korotaeva.vasilisa.weather2.repository
 
-import retrofit2.Response
 import ru.korotaeva.vasilisa.weather2.api.RetrofitInstance
-import ru.korotaeva.vasilisa.weather2.model.geo.Geocoding
 import ru.korotaeva.vasilisa.weather2.model.geo.GeocodingItem
 import ru.korotaeva.vasilisa.weather2.model.weatherOfCity.WeatherOfTheCity
 

@@ -1,6 +1,5 @@
 package ru.korotaeva.vasilisa.weather2.model.weatherOfCity
 
-import java.util.*
 
 data class Daily(
     val clouds: Int,

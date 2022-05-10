@@ -7,13 +7,13 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "weather_table")
 class WeatherModel(
     @PrimaryKey(autoGenerate = true)
-    var id:Int=0,
+    var id: Int = 0,
     @ColumnInfo
-    var date:Long=0,
+    var date: Long = 0,
     @ColumnInfo
-    var temperature: Double=0.0,
+    var temperature: Double = 0.0,
     @ColumnInfo
-    var humidity:Int=0,
+    var humidity: Int = 0,
     @ColumnInfo
-    var pressure:Int=0
+    var pressure: Int = 0
 )

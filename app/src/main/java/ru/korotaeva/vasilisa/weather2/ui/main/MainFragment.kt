@@ -7,12 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ru.korotaeva.vasilisa.weather2.databinding.MainFragmentBinding
-import ru.korotaeva.vasilisa.weather2.room.adapter.WeatherAdapter
 import ru.korotaeva.vasilisa.weather2.room.adapter.WeatherAdapter2
 import ru.korotaeva.vasilisa.weather2.room.modelForDb.WeatherModel
 
@@ -42,16 +40,11 @@ class MainFragment : Fragment() {
 
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        // viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-    }
 
     private fun init() {
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
         viewModel.initDatabase()
         recyclerView = binding.rvWeather
-        // recyclerView.layoutManager=LinearLayoutManager(context,RecyclerView.HORIZONTAL,false)
         adapter = WeatherAdapter2(object : DiffUtil.ItemCallback<WeatherModel>() {
             override fun areItemsTheSame(oldItem: WeatherModel, newItem: WeatherModel): Boolean {
                 return oldItem == newItem
@@ -62,10 +55,19 @@ class MainFragment : Fragment() {
             }
 
         })
+
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(context)
         viewModel.getAllWeather().observe(viewLifecycleOwner) { listWeather ->
             adapter.submitList(listWeather)
+        }
+        viewModel.getCurrent().observe(viewLifecycleOwner) { item ->
+            if (item != null) {
+                binding.textHumidity.text = item.humidity.toString()+"%"
+                binding.textPressure.text = item.pressure.toString()
+                binding.textWeather.text = item.temperature.toString()+"°"
+                binding.textFeels.text = item.feels_like.toString()
+            }
         }
         binding.button.setOnClickListener {
 
