@@ -1,20 +1,25 @@
 package ru.korotaeva.vasilisa.weather2.ui.main
 
-import android.app.Application
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
-import ru.korotaeva.vasilisa.weather2.MainActivity
-import ru.korotaeva.vasilisa.weather2.R
+import android.widget.*
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import ru.korotaeva.vasilisa.weather2.databinding.MainFragmentBinding
+import ru.korotaeva.vasilisa.weather2.room.adapter.WeatherAdapter
+import ru.korotaeva.vasilisa.weather2.room.adapter.WeatherAdapter2
+import ru.korotaeva.vasilisa.weather2.room.modelForDb.WeatherModel
 
 class MainFragment : Fragment() {
+    private lateinit var binding: MainFragmentBinding
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: WeatherAdapter2
 
     companion object {
         fun newInstance() = MainFragment()
@@ -26,27 +31,52 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.main_fragment, container, false)
+        binding = MainFragmentBinding.inflate(layoutInflater, container, false)
+        return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val button = view.findViewById<Button>(R.id.button)
-        button.setOnClickListener {
-            val textWriter = view.findViewById<EditText>(R.id.editTextTextPersonName)
-            if(textWriter.text.toString().trim().equals("")){
-                Toast.makeText(activity, "Введите город", Toast.LENGTH_LONG).show()
-            }
-            else
+        init()
 
-                viewModel.search(textWriter.text.toString())
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        // TODO: Use the ViewModel
+        // viewModel = ViewModelProvider(this)[MainViewModel::class.java]
     }
 
+    private fun init() {
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        viewModel.initDatabase()
+        recyclerView = binding.rvWeather
+        // recyclerView.layoutManager=LinearLayoutManager(context,RecyclerView.HORIZONTAL,false)
+        adapter = WeatherAdapter2(object : DiffUtil.ItemCallback<WeatherModel>() {
+            override fun areItemsTheSame(oldItem: WeatherModel, newItem: WeatherModel): Boolean {
+                return oldItem == newItem
+            }
+
+            override fun areContentsTheSame(oldItem: WeatherModel, newItem: WeatherModel): Boolean {
+                return oldItem.equals(newItem)
+            }
+
+        })
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        viewModel.getAllWeather().observe(viewLifecycleOwner) { listWeather ->
+            adapter.submitList(listWeather)
+        }
+        binding.button.setOnClickListener {
+
+            if (binding.editTextTextPersonName.text.toString().trim() == "") {
+                Toast.makeText(activity, "Введите город", Toast.LENGTH_LONG).show()
+            } else {
+                viewModel.search(binding.editTextTextPersonName.text.toString())
+
+            }
+
+        }
+
+    }
 }
